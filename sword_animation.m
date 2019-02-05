@@ -58,21 +58,26 @@ end
 sword = imrotate(sword,rot_angle,'crop');
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%% video %%%%%%
-time = 10;
-fps = 0.1;
-number_of_frame = floor(time/fps);
+time = inf;
+tpf = 0.01;
+number_of_frame = floor(time/tpf);
 %%% rotaing movement
-cyc_per_sec = 2;
-deg_per_frame = (360*cyc_per_sec)*fps;
+cyc_per_sec = 4;
+deg_per_frame = (360*cyc_per_sec)*tpf;
 %%% linear movement
-velocty = 5;
+velocty = 1.5;
+dc_to_random_ratio = 0.5;
+dc_v = dc_to_random_ratio*velocty;
+angle_of_dc = 30;
+dc_vx = dc_v*cosd(angle_of_dc);
+dc_vy = dc_v*sind(angle_of_dc);
 x = 0;
 y = 0;
 
-change_dir_rate = 0.4;
-change_dir_in_frame = floor(change_dir_rate/fps);
-change_velocity_rate = 0.2;
-change_velocity_in_frame = floor(change_velocity_rate/fps);
+change_dir_rate = 0.01;
+change_dir_in_frame = floor(change_dir_rate/tpf);
+change_velocity_rate = 0.01;
+change_velocity_in_frame = floor(change_velocity_rate/tpf);
 
 phase = rot_angle;
 temp_sword = sword;
@@ -84,7 +89,7 @@ for i = 1:number_of_frame
     view(180,90);
     xlim([1 size]);
     ylim([1 size]);
-    pause(fps);
+    pause(tpf);
     %%% roatation
     temp_sword = sword;
     phase = phase+deg_per_frame;
@@ -100,8 +105,8 @@ for i = 1:number_of_frame
     end
     vy = direction_y*vy;
     vx = direction_x*vx;
-    x = x + size*vx*fps;
-    y = y + size*vy*fps;
+    x = x + size*(vx+dc_vx)*tpf;
+    y = y + size*(vy+dc_vy)*tpf;
     temp_sword = circshift(temp_sword,[floor(y) floor(x)]);
     
 end
